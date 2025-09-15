@@ -1,0 +1,24 @@
+{
+  "name": "checkers",
+  "private": "true",
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "npm@11.5.2",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "type-check": "turbo run type-check",
+    "test": "turbo run test",
+    "frontend:dev": "turbo run dev --filter=frontend",
+    "backend:dev": "turbo run dev --filter=backend",
+    "shared:dev": "turbo run dev --filter=shared"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.6"
+  }
+}

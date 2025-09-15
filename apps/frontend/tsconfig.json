@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": [],
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@checkers/shared": ["../../packages/shared/src"]
+    },
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*", "vite.config.ts"],
+  "exclude": ["dist", "node_modules", "../../node_modules", "../../apps/**"],
+  "references": [{ "path": "../../packages/shared" }]
+}
