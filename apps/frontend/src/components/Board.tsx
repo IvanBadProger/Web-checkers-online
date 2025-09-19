@@ -1,4 +1,4 @@
-import type { useGameSocketReturn } from "@/hooks/useGameSocket"
+import type { useGameSocketReturn } from "@/hooks"
 import { Box, Flex, Grid, GridItem } from "@chakra-ui/react"
 import type { Color, GameState, Cell as TCell, Piece as TPiece } from "@checkers/shared"
 import { Piece } from "./Piece"
@@ -17,6 +17,7 @@ const cellColorMap: Record<Color, string> = {
 export const Board = (props: BoardProps) => {
   const { gameState, onCellClick, onMakeMove } = props
   const { activePiece, board, possibleMoves } = gameState
+  console.log(gameState)
 
   return (
     <Grid templateColumns="repeat(8, 1fr)" templateRows="repeat(8, 1fr)" gap={0}>

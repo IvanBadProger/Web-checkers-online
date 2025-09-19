@@ -11,9 +11,7 @@
     "declaration": true,
     "declarationMap": true,
     "composite": true,
-    "incremental": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true
+    "incremental": true
   },
   "exclude": [
     "**/dist",

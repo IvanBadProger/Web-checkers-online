@@ -9,12 +9,11 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@checkers/shared": ["../../packages/shared/src"]
-    },
-    "skipLibCheck": true
+      "@/*": ["src/*"]
+      // "@checkers/shared": ["../../packages/shared/src"]
+    }
   },
-  "include": ["src/**/*", "vite.config.ts"],
-  "exclude": ["dist", "node_modules", "../../node_modules", "../../apps/**"],
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "../../node_modules"],
   "references": [{ "path": "../../packages/shared" }]
 }

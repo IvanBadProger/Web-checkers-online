@@ -96,4 +96,5 @@ export type {
   RoomCreatedData,
   RoomSettings,
   SelectPiecePayload,
+  Winner,
 }

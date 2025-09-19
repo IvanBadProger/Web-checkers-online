@@ -5,15 +5,16 @@ import {
   JoinRoomPayload,
   MoveData,
   MoveMadeData,
-  Player,
   SelectPiecePayload,
   SOCKET_EVENTS,
+  Player as TPlayer,
 } from "@checkers/shared"
 import express from "express"
 import { createServer } from "http"
 import { Server } from "socket.io"
 import { logger } from "./Logger"
 import { RoomManager } from "./RoomManager"
+import { PlayerModel } from "./models"
 
 const app = express()
 const server = createServer(app)
@@ -37,7 +38,7 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
       }
     })
 
-    const newRoom = roomManager.createRoom(socket.id, username)
+    const newRoom = roomManager.createRoom(new PlayerModel(socket.id, username))
     socket.join(newRoom.id)
     socket.emit(SOCKET_EVENTS.ROOM_CREATED, { roomId: newRoom.id })
     logger.socket(SOCKET_EVENTS.ROOM_CREATED, socket.id, { username, roomId: newRoom.id })
@@ -54,8 +55,8 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
 
     socket.join(roomId)
     const gameStartedData: GameStartedData = {
-      players: room.players as [Player, Player],
-      gameState: room.gameState,
+      players: room.players as [TPlayer, TPlayer],
+      gameState: room.gameState.state,
       currentRoom: roomId,
     }
     io.to(roomId).emit(SOCKET_EVENTS.GAME_STARTED, gameStartedData)
@@ -65,9 +66,7 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
 
   socket.on(SOCKET_EVENTS.MAKE_MOVE, ({ move, roomId }: { roomId: string; move: MoveData }) => {
     logger.game(SOCKET_EVENTS.MAKE_MOVE, roomId, { move })
-    const room = roomManager.getRoom(roomId)
-    if (!room) {
-      socket.emit("error", "room is not found")
+    if (roomManager.hasRoom(roomId)) {
       return
     }
 
@@ -81,13 +80,10 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
     if (!room) {
       return
     }
+    room.gameState.selectPiece(cell)
 
     const updatedState: MoveMadeData = {
-      gameState: {
-        ...room.gameState,
-        activePiece: cell,
-        possibleMoves: roomManager.getPossibleMoves(roomId, cell),
-      },
+      gameState: room.gameState.state,
     }
     io.to(roomId).emit(SOCKET_EVENTS.UPDATED_STATE, updatedState)
   })

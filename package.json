@@ -12,8 +12,6 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
-    "type-check": "turbo run type-check",
-    "test": "turbo run test",
     "frontend:dev": "turbo run dev --filter=frontend",
     "backend:dev": "turbo run dev --filter=backend",
     "shared:dev": "turbo run dev --filter=shared"

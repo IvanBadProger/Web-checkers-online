@@ -1,4 +1,4 @@
-import type { useGameSocketReturn } from "@/hooks/useGameSocket"
+import type { useGameSocketReturn } from "@/hooks"
 import { Button, Input } from "@chakra-ui/react"
 import { useState } from "react"
 import { useUser } from "./UserContext"
