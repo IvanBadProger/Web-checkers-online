@@ -12,7 +12,7 @@ import {
 import express from "express"
 import { createServer } from "http"
 import { Server } from "socket.io"
-import { logger } from "./Logger"
+import { Logger } from "./Logger"
 import { RoomManager } from "./RoomManager"
 import { PlayerModel } from "./models"
 
@@ -26,6 +26,7 @@ const io = new Server(server, {
 })
 
 const roomManager = new RoomManager()
+const logger = Logger.getInstance()
 
 io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
   logger.socket(SOCKET_EVENTS.CONNECTION, socket.id)
@@ -66,7 +67,8 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
 
   socket.on(SOCKET_EVENTS.MAKE_MOVE, ({ move, roomId }: { roomId: string; move: MoveData }) => {
     logger.game(SOCKET_EVENTS.MAKE_MOVE, roomId, { move })
-    if (roomManager.hasRoom(roomId)) {
+    if (!roomManager.hasRoom(roomId)) {
+      console.log("Комната говна не найдена")
       return
     }
 
@@ -77,7 +79,7 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
 
   socket.on(SOCKET_EVENTS.SELECT_PIECE, ({ roomId, cell }: SelectPiecePayload) => {
     const room = roomManager.getRoom(roomId)
-    if (!room) {
+    if (!roomManager.hasRoom(roomId)) {
       return
     }
     room.gameState.selectPiece(cell)

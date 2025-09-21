@@ -26,9 +26,9 @@ export class GameStateModel implements GameState {
   }
 
   get board(): Board {
-    return this._board.map((row) => [...row])
+    // fix : есть ли смысл тут копировать доску?
+    return this._board
   }
-
   get currentPlayer(): Color {
     return this._currentPlayer
   }
@@ -42,6 +42,7 @@ export class GameStateModel implements GameState {
     return this._activePiece ? { ...this._activePiece } : null
   }
   get possibleMoves(): Cell[] {
+    // fix: а тут есть смылс копировать?
     return this._possibleMoves.map((move) => ({ ...move }))
   }
   get state(): GameState {
@@ -55,32 +56,35 @@ export class GameStateModel implements GameState {
     }
   }
 
-  public selectPiece(cell: Cell) {
-    if (this.isGameOver) return this
+  public selectPiece(cell: Cell): void {
+    if (this.isGameOver) return
 
     this._activePiece = cell
     this._possibleMoves = GameEngine.getPossibleMoves(this.board, this.currentPlayer, cell)
   }
 
-  public resetSelection() {
+  public resetSelection(): void {
     this._activePiece = null
     this._possibleMoves = []
   }
 
-  public switchPlayer() {
+  public switchPlayer(): void {
     this._currentPlayer = this.currentPlayer === "white" ? "black" : "white"
   }
 
-  public setWinner(winner: Winner) {
+  public setWinner(winner: Winner): void {
     this._winner = winner
     this._isGameOver = true
   }
 
+  public hasMoves({ col, row }: Cell): boolean {
+    return this._possibleMoves.some((move) => move.col === col && move.row === row)
+  }
+
   public move(to: Cell): void {
-    if (
-      !this._activePiece ||
-      !this._possibleMoves.some((move) => move.col === to.col && move.row === to.row)
-    ) {
+    if (!this._activePiece || !this.hasMoves(to)) {
+      console.log(this._activePiece)
+      console.log(this.hasMoves(to))
       return
     }
 

@@ -143,5 +143,3 @@ export class Logger {
     return this.logger
   }
 }
-
-export const logger = Logger.getInstance()
