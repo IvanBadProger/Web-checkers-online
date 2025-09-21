@@ -2,6 +2,13 @@ import { Board, Cell, Color, MoveData, Piece } from "@checkers/shared"
 import { BoardManager } from "./BoardManager"
 import { MoveValidator } from "./MoveValidator"
 
+type CheckGameOverReturn =
+  | {
+      isGameOver: true
+      winner: Color
+    }
+  | { isGameOver: false; winner: null }
+
 export class GameEngine {
   public static MAX_ROWS = 8
   public static MAX_COLS = 8
@@ -98,7 +105,26 @@ export class GameEngine {
     return false
   }
 
-  public static checkGameOver(board: Board): boolean {
-    return false
+  public static checkGameOver(board: Board, currentPlayer: Color): CheckGameOverReturn {
+    const { black, white } = this._boardManager.getCheckersCount(board)
+
+    if (black === 0) {
+      return { isGameOver: true, winner: "white" }
+    }
+
+    if (white === 0) {
+      return { isGameOver: true, winner: "black" }
+    }
+
+    if (
+      !this._moveValidator.hasAnyValidMoves(board, currentPlayer === "white" ? "black" : "white")
+    ) {
+      return {
+        isGameOver: true,
+        winner: currentPlayer === "white" ? "black" : "white",
+      }
+    }
+
+    return { isGameOver: false, winner: null }
   }
 }

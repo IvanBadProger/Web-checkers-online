@@ -43,7 +43,12 @@ export class RoomManager {
     const room = this.getRoom(roomId)
     if (!room) return null
 
-    room.gameState.move(move.to)
+    const currentPlayer = room.players.find(
+      (player) => player?.color === room.gameState.currentPlayer
+    )
+    if (!currentPlayer) return null
+
+    room.gameState.move(move.to, currentPlayer)
 
     return { ...room.gameState.state }
   }

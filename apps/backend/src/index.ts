@@ -12,7 +12,6 @@ import {
 import express from "express"
 import { createServer } from "http"
 import { Server } from "socket.io"
-import { Logger } from "./Logger"
 import { RoomManager } from "./RoomManager"
 import { PlayerModel } from "./models"
 
@@ -26,13 +25,9 @@ const io = new Server(server, {
 })
 
 const roomManager = new RoomManager()
-const logger = Logger.getInstance()
 
 io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
-  logger.socket(SOCKET_EVENTS.CONNECTION, socket.id)
-
   socket.on(SOCKET_EVENTS.CREATE_ROOM, ({ username }: CreateRoomPayload) => {
-    logger.socket(SOCKET_EVENTS.CREATE_ROOM, socket.id, { username })
     socket.rooms.forEach((room) => {
       if (room !== socket.id) {
         socket.leave(room)
@@ -42,15 +37,12 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
     const newRoom = roomManager.createRoom(new PlayerModel(socket.id, username))
     socket.join(newRoom.id)
     socket.emit(SOCKET_EVENTS.ROOM_CREATED, { roomId: newRoom.id })
-    logger.socket(SOCKET_EVENTS.ROOM_CREATED, socket.id, { username, roomId: newRoom.id })
   })
 
   socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ roomId, username }: JoinRoomPayload) => {
-    logger.game(SOCKET_EVENTS.JOIN_ROOM, roomId, { username })
     const room = roomManager.joinRoom(roomId, socket.id, username)
     if (!room) {
       socket.emit(SOCKET_EVENTS.JOIN_ERROR, ERROR_MESSAGES.JOIN_FAILED)
-      logger.game(SOCKET_EVENTS.JOIN_ERROR, roomId, { username })
       return
     }
 
@@ -61,20 +53,20 @@ io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
       currentRoom: roomId,
     }
     io.to(roomId).emit(SOCKET_EVENTS.GAME_STARTED, gameStartedData)
-
-    logger.game(SOCKET_EVENTS.GAME_STARTED, roomId, { ...gameStartedData })
   })
 
   socket.on(SOCKET_EVENTS.MAKE_MOVE, ({ move, roomId }: { roomId: string; move: MoveData }) => {
-    logger.game(SOCKET_EVENTS.MAKE_MOVE, roomId, { move })
     if (!roomManager.hasRoom(roomId)) {
-      console.log("Комната говна не найдена")
       return
     }
 
     const updatedRoomState = roomManager.makeMove(roomId, move)
     io.to(roomId).emit(SOCKET_EVENTS.UPDATED_STATE, { gameState: updatedRoomState })
-    logger.game(SOCKET_EVENTS.UPDATED_STATE, roomId, { updateRoomState: updatedRoomState })
+
+    const room = roomManager.getRoom(roomId)
+    if (room.gameState.isGameOver) {
+      console.log("НАверное что-то с сервером сделать надо")
+    }
   })
 
   socket.on(SOCKET_EVENTS.SELECT_PIECE, ({ roomId, cell }: SelectPiecePayload) => {

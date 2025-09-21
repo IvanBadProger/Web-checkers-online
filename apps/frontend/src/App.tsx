@@ -1,13 +1,4 @@
-import {
-  Center,
-  Clipboard,
-  Container,
-  Flex,
-  Highlight,
-  HStack,
-  Link,
-  Stack,
-} from "@chakra-ui/react"
+import { Center, Clipboard, Container, Flex, Highlight, Link, Stack } from "@chakra-ui/react"
 import {
   Board,
   CreateRoomForm,
@@ -35,11 +26,11 @@ function App() {
   return (
     <Container fluid>
       <Center py={12} flexDirection={"column"} gap={4}>
-        <HStack fontSize={"2xl"} as={"h1"} asChild>
-          <Highlight query={"GO"} styles={{ bgColor: "teal.200" }}>
-            GO в шашки, заебал
+        <Flex gap={1}>
+          <Highlight query={"мега"} styles={{ bgColor: "teal.200" }}>
+            Это мега шашки
           </Highlight>
-        </HStack>
+        </Flex>
 
         <UserContextProvider>
           <Stack>

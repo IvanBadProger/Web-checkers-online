@@ -1,4 +1,4 @@
-import { Board, Cell, Color, GameState, Winner } from "@checkers/shared"
+import { Board, Cell, Color, GameState, Player, Winner } from "@checkers/shared"
 import { GameEngine } from "../gameEngine"
 
 export class GameStateModel implements GameState {
@@ -81,15 +81,22 @@ export class GameStateModel implements GameState {
     return this._possibleMoves.some((move) => move.col === col && move.row === row)
   }
 
-  public move(to: Cell): void {
+  public move(to: Cell, player: Player): void {
     if (!this._activePiece || !this.hasMoves(to)) {
-      console.log(this._activePiece)
-      console.log(this.hasMoves(to))
       return
     }
 
     this._board = GameEngine.movePiece({ from: this._activePiece, to }, this._board)
     this.resetSelection()
+
+    const { isGameOver } = GameEngine.checkGameOver(this.board, this.currentPlayer)
+    this._isGameOver = isGameOver
+
+    if (this.isGameOver) {
+      this._winner = player as Winner
+      return
+    }
+
     this.switchPlayer()
   }
 }

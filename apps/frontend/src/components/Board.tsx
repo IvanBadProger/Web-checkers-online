@@ -20,7 +20,12 @@ export const Board = (props: BoardProps) => {
   console.log(gameState)
 
   return (
-    <Grid templateColumns="repeat(8, 1fr)" templateRows="repeat(8, 1fr)" gap={0}>
+    <Grid
+      templateColumns="repeat(8, 1fr)"
+      templateRows="repeat(8, 1fr)"
+      gap={0}
+      pointerEvents={gameState.isGameOver ? "none" : "auto"}
+    >
       {board.map((row, rowIndex) =>
         row.map((piece, colIndex) => {
           const cell = { row: rowIndex, col: colIndex }

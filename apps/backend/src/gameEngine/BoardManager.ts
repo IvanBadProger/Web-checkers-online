@@ -1,4 +1,4 @@
-import { Board } from "@checkers/shared"
+import { Board, Color } from "@checkers/shared"
 
 export class BoardManager {
   private MAX_ROWS: number
@@ -16,6 +16,17 @@ export class BoardManager {
   public createInitialBoard(): Board {
     const board = this.createEmptyBoard()
     return this.setDefaultCheckers(board)
+  }
+
+  public getCheckersCount(board: Board): Record<Color, number> {
+    return board.flat().reduce(
+      (counts, cell) => {
+        if (cell?.color === "white") counts.white++
+        if (cell?.color === "black") counts.black++
+        return counts
+      },
+      { white: 0, black: 0 }
+    )
   }
 
   private createEmptyBoard(): Board {

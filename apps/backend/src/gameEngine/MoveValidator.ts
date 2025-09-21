@@ -9,14 +9,10 @@ export class MoveValidator {
     this.MAX_COLS = maxCol
   }
 
-  public getCellValue({ row, col }: Cell, board: Board): Piece | null {
-    return board[row][col]
-  }
-
-  public getPiece({ col, row }: Cell, board: Board): Piece {
+  public getPiece({ row, col }: Cell, board: Board): Piece {
     const piece = board[row][col]
     if (!piece) {
-      throw new Error("Piece not found")
+      throw new Error(`Piece not found at row: ${row}, col: ${col}`)
     }
 
     return piece
@@ -124,6 +120,33 @@ export class MoveValidator {
     return captures
   }
 
+  public hasAnyValidMoves(board: Board, currentPlayer: Color): boolean {
+    for (let row = 0; row < this.MAX_ROWS; row++) {
+      for (let col = 0; col < this.MAX_COLS; col++) {
+        const piece = board[row][col]
+
+        if (!piece || piece.color !== currentPlayer) continue
+
+        const cell = { row, col }
+
+        // const hasCaptures =
+        //   piece.type === "regular"
+        //     ? this.getRegularCaptures(board, currentPlayer, cell).length > 0
+        //     : this.getKingCaptures(board, currentPlayer, cell).length > 0
+
+        // if (hasCaptures) return true
+
+        const hasMoves =
+          piece.type === "regular"
+            ? this.getRegularMoves(cell, board).length > 0
+            : this.getKingMoves(cell, board).length > 0
+        if (hasMoves) return true
+      }
+    }
+
+    return false
+  }
+
   private getDirection(color: Color): number {
     return color === "white" ? -1 : 1
   }
@@ -157,7 +180,7 @@ export class MoveValidator {
     )
       return false
 
-    const middleCellValue = this.getCellValue(middleCell, board)
+    const middleCellValue = board[middleCell.row][middleCell.col]
     return middleCellValue !== null && middleCellValue.color !== currentPlayer
   }
 }
